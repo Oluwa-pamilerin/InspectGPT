@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+
+    "allowJs": false,
+    "noEmit": true // Do not compile the JS (or TS) files in this project on build
+
+  },
+  "compileOnSave": false,
+  "exclude": [ "src", "wwwroot" ],
+  "include": [ "file.ts" ]
+}

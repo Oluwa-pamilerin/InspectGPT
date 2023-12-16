@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto-Expand Textarea</title>
+  <style>
+    textarea {
+      resize: none;
+      overflow-y: hidden;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="myForm">
+    <label for="myTextarea">Type something:</label>
+    <textarea id="myTextarea" rows="1" oninput="autoExpand(this)"></textarea>
+    <br>
+    <input type="submit" value="Submit">
+  </form>
+
+  <script>
+    function autoExpand(element) {
+      element.style.height = "auto";
+      element.style.height = (element.scrollHeight) + "px";
+    }
+
+    document.getElementById("myForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      // Adjust the textarea height back to its initial height
+      document.getElementById("myTextarea").style.height = "initial";
+      // Perform other form submission tasks if needed
+      // ...
+
+      // For demonstration purposes, alert the textarea content
+      alert("Submitted Text:\n" + document.getElementById("myTextarea").value);
+    });
+  </script>
+
+</body>
+</html>
+
+
+display: flex; flex-direction: column; align-items: flex-start;

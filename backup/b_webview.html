@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+        /* Import Google font - Poppins */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        :root {
+            --text-color: #FFFFFF;
+            --icon-color: #ACACBE;
+            --icon-hover-bg: #5b5e71;
+            --placeholder-color: #dcdcdc;
+            --outgoing-chat-bg: #444654;
+            --incoming-chat-bg: #343541;
+            --outgoing-chat-border: #444654;
+            --incoming-chat-border: #343541;
+        }
+
+        .light-mode {
+            --text-color: #343541;
+            --icon-color: #a9a9bc;
+            --icon-hover-bg: #f1f1f3;
+            --placeholder-color: #6c6c6c;
+            --outgoing-chat-bg: #FFFFFF;
+            --incoming-chat-bg: #F7F7F8;
+            --outgoing-chat-border: #FFFFFF;
+            --incoming-chat-border: #D9D9E3;
+        }
+
+        body {
+            background: var(--outgoing-chat-bg);
+        }
+
+        /* Chats container styling */
+        .chat-container {
+            overflow-y: auto;
+            max-height: 100vh;
+            padding-bottom: 150px;
+        }
+
+        :where(.chat-container, textarea)::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        :where(.chat-container, textarea)::-webkit-scrollbar-track {
+            background: var(--incoming-chat-bg);
+            border-radius: 25px;
+        }
+
+        :where(.chat-container, textarea)::-webkit-scrollbar-thumb {
+            background: var(--icon-color);
+            border-radius: 25px;
+        }
+
+        .default-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 70vh;
+            padding: 0 10px;
+            text-align: center;
+            color: var(--text-color);
+        }
+
+        .default-text h1 {
+            font-size: 3.3rem;
+        }
+
+        .default-text p {
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+
+        .chat-container .chat {
+            padding: 25px 10px;
+            display: flex;
+            justify-content: center;
+            color: var(--text-color);
+        }
+
+        .chat-container .chat.outgoing {
+            background: var(--outgoing-chat-bg);
+            border: 1px solid var(--outgoing-chat-border);
+        }
+
+        .chat-container .chat.incoming {
+            background: var(--incoming-chat-bg);
+            border: 1px solid var(--incoming-chat-border);
+        }
+
+        .chat .chat-content {
+            display: flex;
+            max-width: 1200px;
+            width: 100%;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        span.material-symbols-rounded {
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .chat .chat-content span {
+            cursor: pointer;
+            font-size: 1.3rem;
+            color: var(--icon-color);
+            visibility: hidden;
+        }
+
+        .chat:hover .chat-content:not(:has(.typing-animation), :has(.error)) span {
+            visibility: visible;
+        }
+
+        .chat .chat-details {
+            display: flex;
+            align-items: center;
+        }
+
+        .chat .chat-details img {
+            width: 35px;
+            height: 35px;
+            align-self: flex-start;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        .chat .chat-details p {
+            white-space: pre-wrap;
+            font-size: 1.05rem;
+            padding: 0 50px 0 25px;
+            color: var(--text-color);
+            word-break: break-word;
+        }
+
+        .chat .chat-details p.error {
+            color: #e55865;
+        }
+
+        .chat .typing-animation {
+            padding-left: 25px;
+            display: inline-flex;
+        }
+
+        .typing-animation .typing-dot {
+            height: 7px;
+            width: 7px;
+            border-radius: 50%;
+            margin: 0 3px;
+            opacity: 0.7;
+            background: var(--text-color);
+            animation: animateDots 1.5s var(--delay) ease-in-out infinite;
+        }
+
+        .typing-animation .typing-dot:first-child {
+            margin-left: 0;
+        }
+
+        @keyframes animateDots {
+
+            0%,
+            44% {
+                transform: translateY(0px);
+            }
+
+            28% {
+                opacity: 0.4;
+                transform: translateY(-6px);
+            }
+
+            44% {
+                opacity: 0.2;
+            }
+        }
+
+        /* Typing container styling */
+        .typing-container {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            padding: 20px 10px;
+            justify-content: center;
+            background: var(--outgoing-chat-bg);
+            border-top: 1px solid var(--incoming-chat-border);
+        }
+
+        .typing-container .typing-content {
+            display: flex;
+            max-width: 950px;
+            width: 100%;
+            align-items: flex-end;
+        }
+
+        .typing-container .typing-textarea {
+            width: 100%;
+            display: flex;
+            position: relative;
+        }
+
+        .typing-textarea textarea {
+            resize: none;
+            height: 55px;
+            width: 100%;
+            border: none;
+            padding: 15px 45px 15px 20px;
+            color: var(--text-color);
+            font-size: 1rem;
+            border-radius: 4px;
+            max-height: 250px;
+            overflow-y: auto;
+            background: var(--incoming-chat-bg);
+            outline: 1px solid var(--incoming-chat-border);
+        }
+
+        .typing-textarea textarea::placeholder {
+            color: var(--placeholder-color);
+        }
+
+        .typing-content span {
+            width: 55px;
+            height: 55px;
+            display: flex;
+            border-radius: 4px;
+            font-size: 1.35rem;
+            align-items: center;
+            justify-content: center;
+            color: var(--icon-color);
+        }
+
+        .typing-textarea span {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            visibility: hidden;
+        }
+
+        .typing-textarea textarea:valid~span {
+            visibility: visible;
+        }
+
+        .typing-controls {
+            display: flex;
+        }
+
+        .typing-controls span {
+            margin-left: 7px;
+            font-size: 1.4rem;
+            background: var(--incoming-chat-bg);
+            outline: 1px solid var(--incoming-chat-border);
+        }
+
+        .typing-controls span:hover {
+            background: var(--icon-hover-bg);
+        }
+
+        /* Reponsive Media Query */
+        @media screen and (max-width: 600px) {
+            .default-text h1 {
+                font-size: 2.3rem;
+            }
+
+            :where(.default-text p, textarea, .chat p) {
+                font-size: 0.95rem !important;
+            }
+
+            .chat-container .chat {
+                padding: 20px 10px;
+            }
+
+            .chat-container .chat img {
+                height: 32px;
+                width: 32px;
+            }
+
+            .chat-container .chat p {
+                padding: 0 20px;
+            }
+
+            .chat .chat-content:not(:has(.typing-animation), :has(.error)) span {
+                visibility: visible;
+            }
+
+            .typing-container {
+                padding: 15px 10px;
+            }
+
+            .typing-textarea textarea {
+                height: 45px;
+                padding: 10px 40px 10px 10px;
+            }
+
+            .typing-content span {
+                height: 45px;
+                width: 45px;
+                margin-left: 5px;
+            }
+
+            span.material-symbols-rounded {
+                font-size: 1.25rem !important;
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #343541;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #444654;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        #selectedText {
+            visibility: hidden;
+        }
+
+        .chat-container {
+            width: 100%;
+            margin: 20px auto;
+            border-radius: 5px;
+            height: 100%;
+            padding-bottom: 100px;
+        }
+
+        .chat {
+            padding: 20px;
+        }
+
+        .user-message,
+        .bot-message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        .user-message {
+            background-color: #343541;
+        }
+
+        .bot-message {
+            color: white;
+            margin-bottom: 0;
+        }
+
+        .message-input {
+            width: 80%;
+            padding: 10px;
+            border: none;
+            border-top: 1px solid #0078d4;
+            margin: 10px 10px;
+            border-radius: 5px;
+            max-height: 50px;
+            resize: none;
+            overflow: hidden;
+        }
+
+        .send-button {
+            background-color: #6b6c7b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .input {
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #444654;
+        }
+
+        .chat-container {
+            width: 100%;
+            margin: 20px auto;
+            border-radius: 5px;
+            height: 100%;
+            padding-bottom: 100px;
+        }
+
+        .chat {
+            padding: 20px;
+        }
+
+        .message-input {
+            width: 80%;
+            padding: 10px;
+            border: none;
+            border-top: 1px solid #0078d4;
+            margin: 10px 10px;
+            border-radius: 5px;
+            max-height: 50px;
+            resize: none;
+            overflow: hidden;
+        }
+
+        .send-button {
+            background-color: #6b6c7b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .invisible {
+            visibility: hidden;
+        }
+
+        .retry-button {
+            background-color: white;
+            color: #343541;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #bot-message {
+            text-align: left;
+        }
+
+        .top-img {
+            border-radius: 100%;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <header>
+        <img src="https://pbs.twimg.com/media/GA6D0t9WAAAcWXL?format=png&name=small" alt="chatbot-img" class="top-img">
+        <h1>InspectGPT</h1>
+    </header>
+    <div class="chat-container">
+        <div class="chat">
+            <div id="bot-message" class="bot-message">{{searchedResponse}}</div>
+        </div>
+        <div class="chat-container">
+            <!-- Chat messages will go here -->
+        </div>
+        <div class="typing-container">
+            <div class="typing-content">
+                <div class="typing-textarea">
+                    <textarea id="chat-input" spellcheck="false"
+                        style="background-color: #444654; border-color: #444654;" placeholder="Enter a prompt here"
+                        required></textarea>
+                    <span id="send-btn" class="material-symbols-rounded">send</span>
+                </div>
+                <div class="typing-controls">
+                    <!-- <span id="theme-btn" class="material-symbols-rounded">light_mode</span>
+                    <span id="delete-btn" class="material-symbols-rounded">delete</span> -->
+                </div>
+            </div>
+
+        </div>
+        <script type="module">
+
+            const chatInput = document.querySelector("#chat-input");
+            const sendButton = document.querySelector("#send-btn");
+            const initialInputHeight = chatInput.scrollHeight;
+            const chatContainer = document.querySelector(".chat-container");
+            const apiKey = ('{{apiKey}}');
+            var userText = chatInput.value.trim(); // Get chatInput value and remove extra spaces
+
+            const vscode = acquireVsCodeApi();
+            let DiscussServiceClient;
+            let GoogleAuth;
+
+            window.addEventListener('message', event => {
+                const message = event.data;
+
+                if (message.command === 'initialize') {
+                    console.log("Message");
+                    console.log(message.data);
+                    DiscussServiceClient = message.data.DiscussServiceClient;
+                    GoogleAuth = message.data.GoogleAuth;
+
+                    // Now you have access to DiscussServiceClient and GoogleAuth
+                    // Use them as needed
+                } else if (message.command === 'updateText') {
+                    // Handle the updateText command
+                    const newText = message.text;
+                    // Update the webview with the new text
+                    // (Add your logic to handle the updated text)
+                }
+            });
+            console.log("Discuss");
+            console.log(DiscussServiceClient);
+            console.log("GoogleAuth");
+            console.log(GoogleAuth);
+
+
+            const getChatResponse = async (incomingChatDiv) => {
+                const API_URL = "https://api.openai.com/v1/completions";
+                const pElement = document.createElement("p");
+
+
+                // // logic for open ai
+                // // Define the properties and data for the API request
+                // const requestOptions = {
+                //     method: "POST",
+                //     headers: {
+                //         "Content-Type": "application/json",
+                //         "Authorization": `Bearer ${API_KEY}`
+                //     },
+                //     body: JSON.stringify({
+                //         model: "text-davinci-003",
+                //         prompt: userText,
+                //         max_tokens: 2048,
+                //         temperature: 0.2,
+                //         n: 1,
+                //         stop: null
+                //     })
+                // }
+
+                // // Send POST request to API, get response and set the reponse as paragraph element text
+                // try {
+                //     const response = await (await fetch(API_URL, requestOptions)).json();
+                //     pElement.textContent = response.choices[0].text.trim();
+                // } catch (error) { // Add error class to the paragraph element and set error text
+                //     pElement.classList.add("error");
+                //     pElement.textContent = "Oops! Something went wrong while retrieving the response. Please try again.";
+                // }
+
+
+
+
+                // logic for palm2
+
+
+                var messagesOutside = [];
+                async function handleFollowUpFunc() {
+                    const MODEL_NAME = "models/chat-bison-001";
+                    const API_KEY = apiKey;
+                    // const content = "Write a funny poem titled 'The Coder Boy'";
+                    const content = userText;
+                    console.log(content);
+                    messagesOutside.push({
+                        content: content,
+                    });
+                    const messages = messagesOutside;
+                    console.log("Messages Before: ");
+                    for (let i = 0; i < messages.length; i++) {
+                        console.log(`Position ${i + 1}: ${messages[i].content}`);
+                    }
+                    const client = new DiscussServiceClient({
+                        authClient: new GoogleAuth().fromAPIKey(API_KEY),
+                    });
+
+                    const context =
+                        "Reply like a seasoned senior developer and code coach giving detailed explanation to the extracted code line. The file currently being worked on is written in \n '" +
+                        "Javascript" +
+                        "' programming language.";
+                    const examples = [
+                        {
+                            input: {
+                                content:
+                                    "Simply Check this text and say something:axios.post(apiUrl, requestData, { headers }).then(response => {// console.log('Response Status Code:', response.status);console.log('Response Data:', response.data.candidates[0].output.toString());}).catch(error => { console.error('Error:', error);});If it is meaningless, let me know",
+                            },
+                            output: {
+                                content:
+                                    "The provided text appears to be JavaScript code snippet that utilizes the Axios library to perform an HTTP POST request. It sends the request to an API endpoint specified by apiUrl with the request data stored in requestData and custom headers defined in the headers object.Upon successful completion of the request, the then() block is executed, which logs the response status code and the first candidate's output string to the console. If an error occurs during the request, the catch() block is triggered, logging the error details to the console.The code snippet seems meaningful in the context of making HTTP POST requests and handling responses using the Axios library. It demonstrates the basic structure of sending data to an API endpoint and processing the received response",
+                            },
+                        },
+                    ];
+
+                    try {
+                        // Use async/await to wait for the result
+                        const result = await client.generateMessage({
+                            model: MODEL_NAME,
+                            temperature: 0.5,
+                            candidateCount: 1,
+                            top_k: 40,
+                            top_p: 0.95,
+                            prompt: {
+                                context: context,
+                                examples: examples,
+                                messages: messages,
+                            },
+                        });
+
+                        if (
+                            result &&
+                            result[0] &&
+                            result[0].candidates &&
+                            result[0].candidates.length > 0
+                        ) {
+                            result[0].candidates.forEach((obj) => {
+                                messages.push({ content: obj.content });
+                            });
+                        } else {
+                            console.log(
+                                "Didn't catch that. Please Re-Inspect a more concise code segment."
+                            );
+                        }
+
+                        // Return the content from the last candidate
+                        return messages[messages.length - 1].content;
+                    } catch (error) {
+                        if (error.code === "ECONNABORTED") {
+                            // Handle ECONNABORTED error if needed
+                        } else {
+                            console.error("Error sending text to Bard:", error);
+                        }
+                    }
+                }
+
+                async function logResult() {
+                    const result = await handleFollowUpFunc();
+                    return result;
+                }
+
+                // Asynchronous function, so use then() to log the result
+                logResult().then((resultFromFollowUp) => {
+                    if (resultFromFollowUp) {
+                        const formattedResponse = resultFromFollowUp
+                            .split("\n")
+                            .filter((line) => line.trim() !== "")
+                            .map((paragraph) => `<p>${paragraph}</p>`)
+                            .join("")
+                            .toString();
+                        const codeRegex = /```([\s\S]*?)```/g;
+                        function replaceParagraphTagsWithNewlines(match) {
+                            const replacedMatch = match
+                                .replace(/<\/p><p>/g, "\n")
+                                .replace(/```/g, "");
+                            return (
+                                "<pre style='padding: 10px; padding-right: 10px; border-radius:5px; background-color: black; white-space: no-wrap; overflow-x: auto;'><pre><code style = 'color: white;'><xmp>" +
+                                replacedMatch +
+                                "</xmp></code></pre></pre>"
+                            );
+                        }
+                        const searchedResult = formattedResponse.replace(
+                            codeRegex,
+                            replaceParagraphTagsWithNewlines
+                        );
+
+                        // Send the result back to the webview
+                        // panel.webview.postMessage({
+                        //     command: "handleInputResult",
+                        //     result: searchedResult,
+                        // });
+                        pElement.textContent = searchedResult
+                    } else {
+                        // panel.webview.postMessage({
+                        //     command: "handleInputResult",
+                        //     result: "An Error Occured. Please Retry",
+                        // });
+                        pElement.classList.add("error");
+                        pElement.textContent = "Oops! Something went wrong while retrieving the response. Please try again.";
+
+                    }
+                    console.log("Messages After: ");
+                    for (let i = 0; i < messagesOutside.length; i++) {
+                        console.log(`Position ${i + 1}: ${messagesOutside[i].content}`);
+                    }
+                });
+
+
+
+                // Remove the typing animation, append the paragraph element and save the chats to local storage
+                incomingChatDiv.querySelector(".typing-animation").remove();
+                incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
+                localStorage.setItem("all-chats", chatContainer.innerHTML);
+                chatContainer.scrollTo(0, chatContainer.scrollHeight);
+            }
+
+
+            const handleOutgoingChat = () => {
+                userText = chatInput.value.trim(); // Get chatInput value and remove extra spaces
+                if (!userText) return; // If chatInput is empty return from here
+
+                // Clear the input field and reset its height
+                chatInput.value = "";
+                chatInput.style.height = `${initialInputHeight}px`;
+
+                const html = `<div class="chat-content">
+                    <div class="chat-details">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/512px-Visual_Studio_Code_1.35_icon.svg.png" alt="user-img" style="border-radius:100%; width: 30px; height: 30px;">
+                        <p>${userText}</p>
+                    </div>
+                </div>`;
+
+                // Create an outgoing chat div with user's message and append it to chat container
+                const outgoingChatDiv = createChatElement(html, "outgoing");
+                chatContainer.querySelector(".default-text")?.remove();
+                chatContainer.appendChild(outgoingChatDiv);
+                chatContainer.scrollTo(0, chatContainer.scrollHeight);
+                setTimeout(showTypingAnimation, 500);
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const textareaEle = document.getElementById('chat-input');
+                textareaEle.addEventListener('input', () => {
+                    textareaEle.style.height = 'auto';
+                    textareaEle.style.height = `${textareaEle.scrollHeight}px`;
+                });
+            });
+
+            function handleInput(text, callback, content = "") {
+                vscode.postMessage({
+                    command: "handleInput",
+                    text: text,
+                    content: content,
+                });
+            }
+
+            // Set up a listener to handle the result
+            window.addEventListener("message", function (event) {
+                if (event.data.command === "handleInputResult") {
+                    console.log(event.data.result);
+                    appendMessage("bot", event.data.result);
+                }
+            });
+
+            function handleFollowup(selectedText, input) {
+                vscode.postMessage({
+                    command: "followup",
+                    selectedText: selectedText,
+                    input: input,
+                });
+            }
+
+            function retry(selectedText) {
+                vscode.postMessage({
+                    command: "retry",
+                    selectedText: selectedText,
+                });
+            }
+            function appendMessage(sender, message) {
+                const chat = document.querySelector(".chat");
+                const messageElement = document.createElement("div");
+                messageElement.className =
+                    sender === "user" ? "user-message" : "bot-message";
+                const icon = document.createElement("span");
+                icon.className = sender === "user" ? "user-icon" : "bot-icon";
+                icon.innerHTML = sender === "user" ? "👤  " : "🤖  "; // Add icons for the user and bot
+                messageElement.appendChild(icon);
+                messageElement.innerHTML += message;
+                chat.appendChild(messageElement);
+            }
+
+            // Example function for sending a message to Bard
+            function sendToBard(text, selectedText) {
+                appendMessage(
+                    "bot",
+                    "Seen: " + text + " SelectedText: " + selectedText
+                );
+                console.log(handleFollowup(selectedText, text));
+            }
+
+            // Add an event listener to the "Read More" link.
+            const readMoreLinks = document.querySelectorAll(".read-more");
+            readMoreLinks.forEach((link) => {
+                link.addEventListener("click", (event) => {
+                    // Prevent the default link behavior.
+                    event.preventDefault();
+
+                    // Get the parent element of the "Read More" link.
+                    const parentElement = link.closest(".truncated-text");
+
+                    // Remove the "Read More" link from the parent element.
+                    link.remove();
+
+                    // Display the remaining lines of text.
+                    parentElement.classList.remove("truncated");
+                });
+            });
+
+
+
+            chatInput.addEventListener("keydown", (e) => {
+                // If the Enter key is pressed without Shift and the window width is larger 
+                // than 800 pixels, handle the outgoing chat
+                if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
+                    e.preventDefault();
+                    handleOutgoingChat();
+                }
+            });
+
+            sendButton.addEventListener("click", handleOutgoingChat);
+            chatInput.addEventListener("keyup", (event) => {
+                if (event.key === "Enter") {
+                    handleOutgoingChat
+                }
+            }
+            );
+
+
+
+            const createChatElement = (content, className) => {
+                // Create new div and apply chat, specified class and set html content of div
+                const chatDiv = document.createElement("div");
+                chatDiv.classList.add("chat", className);
+                chatDiv.innerHTML = content;
+                return chatDiv; // Return the created chat div
+            }
+
+            const showTypingAnimation = () => {
+                // Display the typing animation and call the getChatResponse function
+                const html = `<div class="chat-content">
+                    <div class="chat-details">
+                        <img src="https://pbs.twimg.com/media/GA6D0t9WAAAcWXL?format=png&name=small" alt="chatbot-img" style="border-radius:100%; width: 30px; height: 30px;">
+                        <div class="typing-animation">
+                            <div class="typing-dot" style="--delay: 0.2s"></div>
+                            <div class="typing-dot" style="--delay: 0.3s"></div>
+                            <div class="typing-dot" style="--delay: 0.4s"></div>
+                        </div>
+                    </div>
+                    <span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>
+                </div>`;
+                // Create an incoming chat div with typing animation and append it to chat container
+                const incomingChatDiv = createChatElement(html, "incoming");
+                chatContainer.appendChild(incomingChatDiv);
+                chatContainer.scrollTo(0, chatContainer.scrollHeight);
+                getChatResponse(incomingChatDiv);
+            }
+
+
+        </script>
+</body>
+
+</html>

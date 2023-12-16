@@ -3,7 +3,7 @@
   "displayName": "InspectGPT",
   "publisher": "O-T-S",
   "description": "AI code Inspector and Assistant. No API Needed.",
-  "version": "3.0.3",
+  "version": "4.0.1",
   "engines": {
     "vscode": "^1.81.0"
   },
@@ -39,6 +39,10 @@
       {
         "command": "extension.inspectGPT",
         "title": "InspectGPT"
+      },
+      {
+        "command": "extension.openWebview",
+        "title": "Open Webview"
       },
       {
         "command": "extension.openWebview",
@@ -97,11 +101,11 @@
   },
   "dependencies": {
     "@google-ai/generativelanguage": "^1.1.0",
+    "@google/generative-ai": "^0.1.1",
     "axios": "^1.5.0",
     "bard-ai": "^2.0.3",
     "dotenv": "^16.3.1",
     "fast-xml-parser": "^4.2.7",
-
     "node-fetch": "^3.3.2",
     "xml-parser": "^1.2.1"
   },
