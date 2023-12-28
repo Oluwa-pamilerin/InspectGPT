@@ -3,7 +3,7 @@
   "displayName": "InspectGPT",
   "publisher": "O-T-S",
   "description": "AI code Inspector and Assistant. No API key Needed.",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "engines": {
     "vscode": "^1.81.0"
   },
