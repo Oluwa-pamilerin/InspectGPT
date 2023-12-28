@@ -117,7 +117,7 @@
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Oluwa-pamilerin/InspectGPT"
+    "url": "https://github.com/Oluwa-pamilerin/InspectGPT.git"
   },
   "license": "MIT",
   "compilerOptions": {
