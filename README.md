@@ -49,7 +49,7 @@ InspectGPT contributes the following settings:
 ## Known Issues
 
 No known issues. 
-Report any issue here 👉 <https://marketplace.visualstudio.com/items?itemName=O-T-S.inspectgpt&ssr=false#review-details/>
+Report any issue here 👉 <https://github.com/Oluwa-pamilerin/InspectGPT/issues/>
 
 ## Release Notes
 
