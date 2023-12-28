@@ -1,45 +1,775 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Auto-Expand Textarea</title>
-  <style>
-    textarea {
-      resize: none;
-      overflow-y: hidden;
-    }
-  </style>
-</head>
-<body>
+    <html>
+    
+    <head>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+        <style>
+            /* Import Google font - Poppins */
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+    
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: "Poppins", sans-serif;
+            }
+    
+            :root {
+                --text-color: #FFFFFF;
+                --icon-color: #ACACBE;
+                --icon-hover-bg: #5b5e71;
+                --placeholder-color: #dcdcdc;
+                --outgoing-chat-bg: #444654;
+                --incoming-chat-bg: #343541;
+                --outgoing-chat-border: #444654;
+                --incoming-chat-border: #343541;
+            }
+    
+            .light-mode {
+                --text-color: #343541;
+                --icon-color: #a9a9bc;
+                --icon-hover-bg: #f1f1f3;
+                --placeholder-color: #6c6c6c;
+                --outgoing-chat-bg: #FFFFFF;
+                --incoming-chat-bg: #F7F7F8;
+                --outgoing-chat-border: #FFFFFF;
+                --incoming-chat-border: #D9D9E3;
+            }
+    
+            body {
+                background: var(--outgoing-chat-bg);
+            }
+    
+            /* Chats container styling */
+            .chat-container {
+                overflow-y: auto;
+                max-height: 100vh;
+                padding-bottom: 150px;
+            }
+    
+            :where(.chat-container, textarea)::-webkit-scrollbar {
+                width: 6px;
+            }
+    
+            :where(.chat-container, textarea)::-webkit-scrollbar-track {
+                background: var(--incoming-chat-bg);
+                border-radius: 25px;
+            }
+    
+            :where(.chat-container, textarea)::-webkit-scrollbar-thumb {
+                background: var(--icon-color);
+                border-radius: 25px;
+            }
+    
+            .default-text {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                height: 70vh;
+                padding: 0 10px;
+                text-align: center;
+                color: var(--text-color);
+            }
+    
+            .default-text h1 {
+                font-size: 3.3rem;
+            }
+    
+            .default-text p {
+                margin-top: 10px;
+                font-size: 1.1rem;
+            }
+    
+            .chat-container .chat {
+                padding: 25px 10px;
+                display: flex;
+                justify-content: center;
+                color: var(--text-color);
+            }
+    
+            .chat-container .chat.outgoing {
+                background: var(--outgoing-chat-bg);
+                border: 1px solid var(--outgoing-chat-border);
+            }
+    
+            .chat-container .chat.incoming {
+                background: var(--incoming-chat-bg);
+                border: 1px solid var(--incoming-chat-border);
+            }
+    
+            .chat .chat-content {
+                display: flex;
+                max-width: 1200px;
+                width: 100%;
+                align-items: flex-start;
+                justify-content: space-between;
+            }
+    
+            span.material-symbols-rounded {
+                user-select: none;
+                cursor: pointer;
+            }
+    
+            .chat .chat-content span {
+                cursor: pointer;
+                font-size: 1.3rem;
+                color: var(--icon-color);
+                visibility: hidden;
+            }
+    
+            .chat:hover .chat-content:not(:has(.typing-animation), :has(.error)) span {
+                visibility: visible;
+            }
+    
+            .chat .chat-details {
+                display: flex;
+                align-items: center;
+            }
+    
+            .chat .chat-details img {
+                width: 35px;
+                height: 35px;
+                align-self: flex-start;
+                object-fit: cover;
+                border-radius: 2px;
+                flex:1;
+            }
+    
+            .chat .chat-details p {
+                white-space: pre-wrap;
+                font-size: 1.05rem;
+                padding: 0 50px 0 25px;
+                color: var(--text-color);
+                word-break: break-word;
+            }
+    
+            .chat .chat-details p.error {
+                color: #e55865;
+            }
+    
+            .chat .typing-animation {
+                padding-left: 25px;
+                display: inline-flex;
+            }
+    
+            .typing-animation .typing-dot {
+                height: 7px;
+                width: 7px;
+                border-radius: 50%;
+                margin: 0 3px;
+                opacity: 0.7;
+                background: var(--text-color);
+                animation: animateDots 1.5s var(--delay) ease-in-out infinite;
+            }
+    
+            .typing-animation .typing-dot:first-child {
+                margin-left: 0;
+            }
+    
+            @keyframes animateDots {
+    
+                0%,
+                44% {
+                    transform: translateY(0px);
+                }
+    
+                28% {
+                    opacity: 0.4;
+                    transform: translateY(-6px);
+                }
+    
+                44% {
+                    opacity: 0.2;
+                }
+            }
+    
+            /* Typing container styling */
+            .typing-container {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                display: flex;
+                padding: 20px 10px;
+                justify-content: center;
+                background: var(--outgoing-chat-bg);
+                border-top: 1px solid var(--incoming-chat-border);
+            }
+    
+            .typing-container .typing-content {
+                display: flex;
+                max-width: 950px;
+                width: 100%;
+                align-items: flex-end;
+            }
+    
+            .typing-container .typing-textarea {
+                width: 100%;
+                display: flex;
+                position: relative;
+            }
+    
+            .typing-textarea textarea {
+                resize: none;
+                height: 55px;
+                width: 100%;
+                border: none;
+                padding: 15px 45px 15px 20px;
+                color: var(--text-color);
+                font-size: 1rem;
+                border-radius: 4px;
+                max-height: 250px;
+                overflow-y: auto;
+                background: var(--incoming-chat-bg);
+                outline: 1px solid var(--incoming-chat-border);
+            }
+    
+            .typing-textarea textarea::placeholder {
+                color: var(--placeholder-color);
+            }
+    
+            .typing-content span {
+                width: 55px;
+                height: 55px;
+                display: flex;
+                border-radius: 4px;
+                font-size: 1.35rem;
+                align-items: center;
+                justify-content: center;
+                color: var(--icon-color);
+            }
+    
+            .typing-textarea span {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                visibility: hidden;
+            }
+    
+            .typing-textarea textarea:valid~span {
+                visibility: visible;
+            }
+    
+            .typing-controls {
+                display: flex;
+            }
+    
+            .typing-controls span {
+                margin-left: 7px;
+                font-size: 1.4rem;
+                background: var(--incoming-chat-bg);
+                outline: 1px solid var(--incoming-chat-border);
+            }
+    
+            .typing-controls span:hover {
+                background: var(--icon-hover-bg);
+            }
+    
+            /* Reponsive Media Query */
+            @media screen and (max-width: 600px) {
+                .default-text h1 {
+                    font-size: 2.3rem;
+                }
+    
+                :where(.default-text p, textarea, .chat p) {
+                    font-size: 0.95rem !important;
+                }
+    
+                .chat-container .chat {
+                    padding: 20px 10px;
+                }
+    
+                .chat-container .chat img {
+                    height: 32px;
+                    width: 32px;
+                }
+    
+                .chat-container .chat p {
+                    padding: 0 20px;
+                }
+    
+                .chat .chat-content:not(:has(.typing-animation), :has(.error)) span {
+                    visibility: visible;
+                }
+    
+                .typing-container {
+                    padding: 15px 10px;
+                }
+    
+                .typing-textarea textarea {
+                    height: 45px;
+                    padding: 10px 40px 10px 10px;
+                }
+    
+                .typing-content span {
+                    height: 45px;
+                    width: 45px;
+                    margin-left: 5px;
+                }
+    
+                span.material-symbols-rounded {
+                    font-size: 1.25rem !important;
+                }
+            }
+    
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #343541;
+                margin: 0;
+                padding: 0;
+            }
+    
+            header {
+                background-color: #444654;
+                color: white;
+                text-align: center;
+                padding: 30px;
+            }
+    
+            #selectedText {
+                visibility: hidden;
+            }
+    
+            .chat-container {
+                width: 100%;
+                margin: 20px auto;
+                border-radius: 5px;
+                height: 100%;
+                padding-bottom: 100px;
+            }
+    
+            .chat {
+                padding: 20px;
+            }
+    
+            .user-message,
+            .bot-message {
+                padding: 10px;
+                margin: 5px 0;
+                border-radius: 5px;
+            }
+    
+            .user-message {
+                background-color: #343541;
+            }
+    
+            .bot-message {
+                color: white;
+                margin-bottom: 0;
+            }
+    
+            .message-input {
+                width: 80%;
+                padding: 10px;
+                border: none;
+                border-top: 1px solid #0078d4;
+                margin: 10px 10px;
+                border-radius: 5px;
+                max-height: 50px;
+                resize: none;
+                overflow: hidden;
+            }
+    
+            .send-button {
+                background-color: #6b6c7b;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+    
+            .input {
+                text-align: center;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                padding: 10px;
+                border-radius: 5px;
+                background-color: #444654;
+            }
+    
+            .chat-container {
+                width: 100%;
+                margin: 20px auto;
+                border-radius: 5px;
+                height: 100%;
+                padding-bottom: 100px;
+            }
+    
+            .chat {
+                padding: 20px;
+            }
+    
+            .message-input {
+                width: 80%;
+                padding: 10px;
+                border: none;
+                border-top: 1px solid #0078d4;
+                margin: 10px 10px;
+                border-radius: 5px;
+                max-height: 50px;
+                resize: none;
+                overflow: hidden;
+            }
+    
+            .send-button {
+                background-color: #6b6c7b;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+    
+            .invisible {
+                visibility: hidden;
+            }
+    
+            .retry-button {
+                background-color: white;
+                color: #343541;
+                border: none;
+                padding: 5px 10px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+    
+            #bot-message {
+                text-align: left;
+            }
+    
+            .top-img {
+                border-radius: 100%;
+                width: 100px;
+                height: 100px;
+            }
 
-  <form id="myForm">
-    <label for="myTextarea">Type something:</label>
-    <textarea id="myTextarea" rows="1" oninput="autoExpand(this)"></textarea>
-    <br>
-    <input type="submit" value="Submit">
-  </form>
+            .other-content{
+              flex:4;
+              white-space: pre-line;
+            }
 
-  <script>
-    function autoExpand(element) {
-      element.style.height = "auto";
-      element.style.height = (element.scrollHeight) + "px";
-    }
+            .bot-response{
+              padding: 0;
+            }
+        </style>
+    
+    
+    </head>
+    
+    <body>
+        <header>
+            <img src="https://pbs.twimg.com/media/GA6D0t9WAAAcWXL?format=png&name=small" alt="chatbot-img" class="top-img">
+            <h1>InspectGPT</h1>
+        </header>
+        <div class="chat-container">
+            <div class="chat">
+                <div id="bot-message" class="bot-message">${boldText(
+                  searchedResponse
+                )}</div>
+            </div>
+            <div class="chat-container">
+                <!-- Chat messages will go here -->
+            </div>
+            <div class="typing-container">
+                <div class="typing-content">
+                    <div class="typing-textarea">
+                        <textarea id="chat-input" spellcheck="false"
+                            style="background-color: #444654; border-color: #444654;" placeholder="Ask Follow-up Questions"
+                            required></textarea>
+                        <span id="send-btn" class="material-symbols-rounded">send</span>
+                    </div>
+                    <div class="typing-controls">
+                        <!-- <span id="theme-btn" class="material-symbols-rounded">light_mode</span>
+                        <span id="delete-btn" class="material-symbols-rounded">delete</span> -->
+                    </div>
+                </div>
+    
+            </div>
+            <script type="module">
+                document.addEventListener('DOMContentLoaded', () => {
+                    const textareaEle = document.getElementById('chat-input');
+                    textareaEle.addEventListener('input', () => {
+                        textareaEle.style.height = 'auto';
+                        textareaEle.style.height = document.getElementById('chat-input').scrollHeight + "px";
+                    })
+                });
+    
+                const chatInput = document.querySelector("#chat-input");
+                const sendButton = document.querySelector("#send-btn");
+                const initialInputHeight = chatInput.scrollHeight;
+                const chatContainer = document.querySelector(".chat-container");
+                const apiKey = ('{{apiKey}}');
+    
+                const vscode = acquireVsCodeApi();
+                let DiscussServiceClient;
+                let GoogleAuth;
+    
+                window.addEventListener('message', event => {
+                    const message = event.data;
+    
+                    if (message.command === 'initialize') {
+                        console.log("Message");
+                        console.log(message.data);
+                        DiscussServiceClient = message.data.DiscussServiceClient;
+                        GoogleAuth = message.data.GoogleAuth;
+    
+                        // Now you have access to DiscussServiceClient and GoogleAuth
+                        // Use them as needed
+                    } else if (message.command === 'updateText') {
+                        // Handle the updateText command
+                        const newText = message.text;
+                        // Update the webview with the new text
+                        // (Add your logic to handle the updated text)
+                    }
+                });
+                console.log("Discuss");
+                console.log(DiscussServiceClient);
+                console.log("GoogleAuth");
+                console.log(GoogleAuth);
+    
+    
+                const getChatResponse = async (incomingChatDiv, botReply) => {
+                    const API_URL = "https://api.openai.com/v1/completions";
+                    const pElement = document.createElement("p");
+                    const chatInput = document.querySelector("#chat-input");
+                    const humanInput = chatInput.value;
+                    const userText = chatInput.value.trim(); // Get chatInput value and remove extra spaces
+    
+    
+    
+    
+                    // logic for open ai
+                    // Define the properties and data for the API request
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+                    // Send POST request to API, get response and set the reponse as paragraph element text
+                    try {
+                        chatInput.value = '';
+                        const elements = document.querySelectorAll('#typing-ani');
+                        const botIcon = "https://pbs.twimg.com/media/GA6D0t9WAAAcWXL?format=png&name=small";
 
-    document.getElementById("myForm").addEventListener("submit", function(event) {
-      event.preventDefault();
-      // Adjust the textarea height back to its initial height
-      document.getElementById("myTextarea").style.height = "initial";
-      // Perform other form submission tasks if needed
-      // ...
+                        // Check if there are any elements with the specified class
+                        if (elements.length > 0) {
+                            // Get the last element with class 'myTarget'
+                            const lastElement = elements[elements.length - 1];
+    
+                            // Now you can manipulate the last element as needed
+                            // lastElement.classList.remove('chat-content');
+                            lastElement.classList.add('bot-response');
+                            lastElement.innerHTML = "<div class='chat-details'><div style=' flex:1; max-width: 5%;'><img src='" + botIcon + "' alt='chatbot-img' style='border-radius:100%; width: 30px; height: 30px; display: flex;z align-items: flex-start;'></div><div class='other-content'>"+ botReply +"</div></div>";
 
-      // For demonstration purposes, alert the textarea content
-      alert("Submitted Text:\n" + document.getElementById("myTextarea").value);
-    });
-  </script>
+                            // Add more operations or modifications as required
+                        } else {
+                            console.log('No element with class "myTarget" found.');
+                        }
+                    } catch (error) { // Add error class to the paragraph element and set error text
+                        pElement.classList.add("error");
+                        pElement.textContent = "Oops! Something went wrong while retrieving the response. Please try again. Here is what yoy typed: " + inputText;
+                    }
+    
+    
+    
+                    // Remove the typing animation, append the paragraph element and save the chats to local storage
+                    // incomingChatDiv.querySelector(".typing-animation").remove();
+                    // incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
+                    localStorage.setItem("all-chats", chatContainer.innerHTML);
+                    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+                }
+    
+    
+                const handleOutgoingChat = (botReply) => {
+    
+                    setTimeout(function () {
+                        // Display the typing animation and call the getChatResponse function
+                        const html = "<div class='chat-content'><div class='chat-details'><img src='https://pbs.twimg.com/media/GA6D0t9WAAAcWXL?format=png&name=small' alt='chatbot-img' style='border-radius:100%; width: 30px; height: 30px;'><div class='typing-animation other-content'><div class='typing-dot' style='--delay: 0.2s'></div><div class='typing-dot' style='--delay: 0.3s'></div><div class='typing-dot' style='--delay: 0.4s'></div></div></div><span onclick='copyResponse(this)' class='material-symbols-rounded'>content_copy</span></div>"
+                        // Create an incoming chat div with typing animation and append it to chat container
+                        const incomingChatDiv = createChatElement('', "incoming");
+                        chatContainer.appendChild(incomingChatDiv);
+                        chatContainer.scrollTo(0, chatContainer.scrollHeight);
+                        getChatResponse(incomingChatDiv, botReply);
+                    }
+                        , 500);
+                }
+    
+                function handleInput(text, callback, content = "") {
+                    vscode.postMessage({
+                        command: "handleInput",
+                        text: text,
+                        content: content,
+                    });
+                    chatInput.value = '';
+                    chatInput.style.height = initialInputHeight + 'px';
+                }
+    
+                // Set up a listener to handle the result
+                window.addEventListener("message", function (event) {
+                    if (event.data.command === "handleInputResult") {
+                        handleOutgoingChat(event.data.result);
+                    }
+                });
+    
+                function handleFollowup(selectedText, input) {
+                    vscode.postMessage({
+                        command: "followup",
+                        selectedText: selectedText,
+                        input: input,
+                    });
+                }
+    
+                function retry(selectedText) {
+                    vscode.postMessage({
+                        command: "retry",
+                        selectedText: selectedText,
+                    });
+                }
+                function appendMessage(sender, message) {
+                    const chat = document.querySelector(".chat");
+                    const messageElement = document.createElement("div");
+                    messageElement.className =
+                        sender === "user" ? "user-message" : "bot-message";
+                    const icon = document.createElement("span");
+                    icon.className = sender === "user" ? "user-icon" : "bot-icon";
+                    icon.innerHTML = sender === "user" ? "👤  " : "🤖  "; // Add icons for the user and bot
+                    messageElement.appendChild(icon);
+                    messageElement.innerHTML += message;
+                    chat.appendChild(messageElement);
+                }
+    
+                // Add an event listener to the "Read More" link.
+                const readMoreLinks = document.querySelectorAll(".read-more");
+                readMoreLinks.forEach((link) => {
+                    link.addEventListener("click", (event) => {
+                        // Prevent the default link behavior.
+                        event.preventDefault();
+    
+                        // Get the parent element of the "Read More" link.
+                        const parentElement = link.closest(".truncated-text");
+    
+                        // Remove the "Read More" link from the parent element.
+                        link.remove();
+    
+                        // Display the remaining lines of text.
+                        parentElement.classList.remove("truncated");
+                    });
+                });
+    
+    
+                console.log(${getResult});
 
-</body>
-</html>
+                if (${getResult} == true) {
 
+    
+    
+                    // function makeChatDiv(){
+                    //   const userText = chatInput.value.trim(); // Get chatInput value and remove extra spaces
+                    //   if (!userText) return; // If chatInput is empty return from here
+                    //   chatInput.style.height = initialInputHeight + 'px';
+    
+                    //   var html = "<div class='chat-content'><div class='chat-details'><img src='https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/512px-Visual_Studio_Code_1.35_icon.svg.png' alt='user-img' style='border-radius:100%; width: 30px; height: 30px;'><p>"+ userText +"</p></div></div>";
+    
+    
+    
+                    //   // Create an outgoing chat div with user's message and append it to chat container
+                    //   const outgoingChatDiv = createChatElement(html, "outgoing");
+                    //   chatContainer.querySelector(".default-text")?.remove();
+                    //   chatContainer.appendChild(outgoingChatDiv);
+                    //   chatContainer.scrollTo(0, chatContainer.scrollHeight);
+    
+                    //   // Display the typing animation and call the getChatResponse function
+                    //   var htmlIn = "<div class='chat-content' ><div class='chat-details '><img src='https://pbs.twimg.com/media/GA6D0t9WAAAcWXL?format=png&name=small' alt='chatbot-img' style='border-radius:100%; width: 30px; height: 30px;'><div class='typing-animation' id='typing-ani'><div class='typing-dot' style='--delay: 0.2s'></div><div class='typing-dot' style='--delay: 0.3s'></div><div class='typing-dot' style='--delay: 0.4s'></div></div></div></div>"
+                    //   // Create an incoming chat div with typing animation and append it to chat container
+                    //   const incomingChatDiv = createChatElement(htmlIn, "incoming");
+                    //   chatContainer.appendChild(incomingChatDiv);
+                    //   chatContainer.scrollTo(0, chatContainer.scrollHeight);
+                    // }
+    
+    
+    
+                    function makeChatDiv() {
+                        const userText = chatInput.value.trim(); // Get chatInput value and remove extra spaces
+                        if (!userText) return; // If chatInput is empty, return from here
+    
+                        const userIcon = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/512px-Visual_Studio_Code_1.35_icon.svg.png";
+                        const botIcon = "https://pbs.twimg.com/media/GA6D0t9WAAAcWXL?format=png&name=small";
+    
+                        // Create an outgoing chat div with user's message and append it to chat container
+                        const userMessageHTML = "<div class='chat-content'><div class='chat-details'><img src='" + userIcon + "' alt='user-img' style='border-radius:100%; width: 30px; height: 30px;'><p>" + userText + "</p></div></div>";
+                        const outgoingChatDiv = createChatElement(userMessageHTML, "outgoing");
+                        chatContainer.querySelector(".default-text")?.remove();
+                        chatContainer.appendChild(outgoingChatDiv);
+                        chatContainer.scrollTo(0, chatContainer.scrollHeight);
+    
+                        // Display the typing animation and call the getChatResponse function
+                        const botMessageHTML = "<div class='chat-content' id='typing-ani'><div class='chat-details'><img src='" + botIcon + "' alt='chatbot-img' style='border-radius:100%; width: 30px; height: 30px;'><div class='typing-animation' ><div class='typing-dot' style='--delay: 0.2s'></div><div class='typing-dot' style='--delay: 0.3s'></div><div class='typing-dot' style='--delay: 0.4s'></div></div></div></div>";
+                        // Create an incoming chat div with typing animation and append it to chat container
+                        const incomingChatDiv = createChatElement(botMessageHTML, "incoming");
+                        chatContainer.appendChild(incomingChatDiv);
+                        chatContainer.scrollTo(0, chatContainer.scrollHeight);
+                    }
+    
+    
+    
+                    document.getElementById("send-btn").addEventListener("click", () => {
+                        const userText = chatInput.value.trim(); // Get chatInput value and remove extra spaces
+                        if (!userText) return; // If chatInput is empty return from here
+                        makeChatDiv();
+                        // Clear the input field and reset its height
+                        handleInput('', function (result) {
+                        }, chatInput.value);
+                    });
+                }
+    
+    
+                chatInput.addEventListener("keydown", (e) => {
+                  // If the Enter key is pressed without Shift and the window width is larger 
+                  // than 800 pixels, handle the outgoing chat
+                  if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
+                      e.preventDefault();
+                      const userText = chatInput.value.trim(); // Get chatInput value and remove extra spaces
+                      if (!userText) return; // If chatInput is empty return from here
+                      makeChatDiv();
+                      // Clear the input field and reset its height
+                      handleInput('', function (result) {
+                      }, chatInput.value);
+                  }
+                  });
+    
 
-display: flex; flex-direction: column; align-items: flex-start;
+                const createChatElement = (content, className) => {
+                    // Create new div and apply chat, specified class and set html content of div
+                    const chatDiv = document.createElement("div");
+                    chatDiv.classList.add("chat", className);
+                    // chatDiv.innerHTML ="<div class='chat'><div id='bot-message' class='bot-message'>" + content + "</div></div>";
+                    chatDiv.innerHTML = content;
+                    return chatDiv; // Return the created chat div
+                }
+    
+                const showTypingAnimation = () => {
+                    // Display the typing animation and call the getChatResponse function
+                    const html = "<div class='chat-content'><div class='chat-details'><img src='https://pbs.twimg.com/media/GA6D0t9WAAAcWXL?format=png&name=small' alt='chatbot-img' style='border-radius:100%; width: 30px; height: 30px;'><div class='typing-animation'><div class='typing-dot' style='--delay: 0.2s'></div><div class='typing-dot' style='--delay: 0.3s'></div><div class='typing-dot' style='--delay: 0.4s'></div></div></div><span onclick='copyResponse(this)' class='material-symbols-rounded'>content_copy</span></div>"
+                    // Create an incoming chat div with typing animation and append it to chat container
+                    const incomingChatDiv = createChatElement(html, "incoming");
+                    chatContainer.appendChild(incomingChatDiv);
+                    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+                    getChatResponse(incomingChatDiv);
+    
+                }
+            </script>
+    </body>
+    
+    </html>

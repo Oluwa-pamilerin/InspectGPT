@@ -2,14 +2,16 @@
   "name": "inspectgpt",
   "displayName": "InspectGPT",
   "publisher": "O-T-S",
-  "description": "AI code Inspector and Assistant. No API Needed.",
-  "version": "4.0.1",
+  "description": "AI code Inspector and Assistant. No API key Needed.",
+  "version": "4.0.2",
   "engines": {
     "vscode": "^1.81.0"
   },
   "categories": [
     "Debuggers",
     "Education",
+    "Machine Learning",
+    "Programming Languages",
     "Other"
   ],
   "activationEvents": [
@@ -107,12 +109,15 @@
     "dotenv": "^16.3.1",
     "fast-xml-parser": "^4.2.7",
     "node-fetch": "^3.3.2",
-    "xml-parser": "^1.2.1"
+    "xml-parser": "^1.2.1",
+    "colors": "^1.4.0",
+    "openai": "^3.3.0",
+    "readline-sync": "^1.4.10"
   },
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/inspect-gpt-extension.git"
+    "url": "https://github.com/Oluwa-pamilerin/InspectGPT"
   },
   "license": "MIT",
   "compilerOptions": {

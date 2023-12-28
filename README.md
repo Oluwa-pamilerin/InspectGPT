@@ -3,45 +3,53 @@
 
 ## Features
 
+- InspectGPT fully **understands** your current project and assists you every step of the way.
 - InspectGPT **explains** your highlighted code segment based on the context of your whole coding project.
-- InspectGPT **correct** errors and **suggests** improvements to your code.
-- InspectGPT allows **followup** questions and gives comprehensive response.
+- InspectGPT **corrects** errors and **suggests** improvements to your code.
+- InspectGPT allows **followup** questions and gives comprehensive and contextual responses.
 - Many more...
 
 ## Features on the way
 
-- Enablement of all programing languages
-- Integration of Stackoverflow
-- Access to official documentations
-- Integration of GPT 4.0
+- Integration of Stack Overflow.
+- Access to official documentations.
+- Generation of images and animations.
 
 ---
 *When InspectGPT is ready:*
-![Welcome Message](images/set.png)
-*Highlight a code segment:*
-![Highlight](images/highlight.png)
-*Wait for the InspectGPT:*
-![Wait](images/waiting.png)
-*Here you go!*
-![Got](images/got.png)
-*Ask follow-up Questions:*
-![Follow-up](images/follow-up.png)
-*3-way entry:*
-![3-way](images/3-way.png)
+![Welcome Message](https://pbs.twimg.com/media/GBeaPBbWAAAjMNG?format=jpg&name=large)
 
+*Highlight a code segment:*
+![Highlight](https://pbs.twimg.com/media/GBeaPBcXoAEva6j?format=jpg&name=large)
+
+*Wait for the InspectGPT:*
+![Wait](https://pbs.twimg.com/media/GBeaPBbWcAA9NB-?format=jpg&name=large)
+
+*Here you go!*
+![Got](https://pbs.twimg.com/media/GBeaPBbWIAAXwHC?format=jpg&name=large)
+
+*Ask follow-up Questions:*
+![Follow-up](https://pbs.twimg.com/media/GBeafQ2XgAAWJPj?format=jpg&name=large)
+
+*Multiple-way entry:*
+![Multiple-way entry](https://pbs.twimg.com/media/GBeafRAWcAEuHAZ?format=jpg&name=large)
 
 ## Requirements
 
-Does not require API key.
+To use for other programming languages **except** Python, **OpenAI API key** is required. 
+InspectGPT for Python is **FREE**.
 
 ## Extension Settings
-This extension contributes the following settings:
+InspectGPT contributes the following settings:
 
 * `InspectGPT.deactivate-Popup-Window`: Enable/disable 'InspectGPT' pop-up.
+* `InspectGPT.apiKey`: Insert OpenAI API key. Search 'InspectGPT API key' at the Command Palette.
+
 
 ## Known Issues
 
-Works with only *Python* files for now. Anticipate updates.
+No known issues. 
+Report any issue here 👉 <https://marketplace.visualstudio.com/items?itemName=O-T-S.inspectgpt&ssr=false#review-details/>
 
 ## Release Notes
 
@@ -50,9 +58,12 @@ Works with only *Python* files for now. Anticipate updates.
 
 Initial Release of InspectGPT.
 
-### 3.0.5
+### 4.0.2
 
- Up To date.
+Works well with Python files.
+
+### 4.0.3
+Latest version. Up to date.
 
 ---
 
